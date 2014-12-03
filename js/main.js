@@ -43,7 +43,7 @@ function authenticate(){
 
         loadDelta(tree, undefined, function(){
             $("#progress-box").hide();
-            $("#tipp").show();
+            $("#hint").show();
             loadChart(tree);
             window.tree = tree;
         }, function (currentProgress) {
