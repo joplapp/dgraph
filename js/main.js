@@ -24,7 +24,7 @@ function authenticate(){
 
         addFolderToTree(client, tree, "", 0);
 
-        loadChart();
+        loadChart(tree);
     });
 }
 
@@ -49,8 +49,8 @@ var addFolderToTree = function (client, tree, folder, level) {
 };
 
 
-function loadChart() {
+function loadChart(tree) {
 
-    initializeChart();
+    initializeChart(tree.toArray());
 
 }

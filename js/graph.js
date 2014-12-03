@@ -40,7 +40,7 @@ function initializeChart(root) {
             return radius / 3 * (d.depth + 1) - 1;
         });
 
-    console.log(error, root)
+    console.log(root)
     // Compute the initial layout on the entire tree to sum sizes.
     // Also compute the full name and fill color for each node,
     // and stash the children so they can be restored as we descend.
