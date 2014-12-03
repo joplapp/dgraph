@@ -24,34 +24,39 @@ function authenticate(){
 
         loadDelta(tree, undefined, function(){
             loadChart(tree)
-        });
+        }, 10000);
     });
 }
 
-var addFolder = function(tree, path){
+var followPath = function(tree, path, method, attrib){
     var folders = path.split("/");
-    var node = tree;
+    var node = tree, newNode;
 
     for(var i=1; i<folders.length-1; i++){
-        node = node.getNode(folders[i]);
+        newNode = node.getNode(folders[i]);
+        if(!node){
+            newNode = node.addNode(folders[i]);
+        }
+        node = newNode;
     }
 
-    node.addNode(folders.pop());
+    node[method](folders.pop(), attrib);
+};
+
+var addFolder = function(tree, path){
+    followPath(tree, path, "addNode");
 };
 var addFile = function(tree, path, size){
-    var folders = path.split("/");
-    var node = tree;
-
-    for(var i=1; i<folders.length-1; i++){
-        node = node.getNode(folders[i]);
-    }
-    node.addChild(folders.pop(), size);
+    followPath(tree, path, "addChild", size);
 };
 
-var loadDelta = function(tree, cursor, done){
-
+var loadDelta = function(tree, cursor, done, counter){
+    if(counter < 0){
+        done();
+    }
     client.delta(cursor, function(err, result){
         if(!result.changes){
+            done();
             return;
         }
         result.changes.forEach(function(item){
@@ -62,7 +67,7 @@ var loadDelta = function(tree, cursor, done){
             }
         });
         if(result.shouldPullAgain) {
-            loadDelta(tree, result.cursorTag, done)
+            loadDelta(tree, result.cursorTag, done, counter - result.changes.length)
         } else {
             done();
         }
