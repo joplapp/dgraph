@@ -11,7 +11,7 @@ if ((host == window.location.host) && (window.location.protocol != "https:")){
 }
 
 $( document ).ready(function() {
-    $('#dropbox-connect').click(function () {
+    $('.btn-dropbox').click(function () {
         authenticate();
     });
 });
