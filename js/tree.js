@@ -50,7 +50,7 @@ Tree.prototype.combineLeaves = function(threshold){
 
     for(var i=0; i<this.leaves.length; i++) {
         var item = this.leaves[i];
-        if (item.size < threshold) {
+        if (item.size <= 1000) {
             counter++;
             totalSize += item.size;
 

@@ -5,6 +5,12 @@
 
 var client = new Dropbox.Client({ key: "f629oxf1xdmgu0g" });
 
+$( document ).ready(function() {
+    $('#dropbox-connect').click(function () {
+        authenticate();
+    });
+});
+
 function authenticate(){
     client.authenticate(function(error, client) {
         if (error) {
@@ -19,6 +25,8 @@ function authenticate(){
         //
         // The user authorized your app, and everything went well.
         // client is a Dropbox.Client instance that you can use to make API calls.
+        $("#dropbox-connect").hide();
+        $("#progress-box").show();
         var totalBytes = 0;
 
         client.getAccountInfo(function (error, accountInfo) {
@@ -30,15 +38,17 @@ function authenticate(){
 
         loadDelta(tree, undefined, function(){
             $("#progress-box").hide();
+            $("#tipp").show();
             loadChart(tree);
+            window.tree = tree;
         }, function (currentProgress) {
             console.log(currentProgress / totalBytes);
             if (totalBytes == 0) {
                 return;
             }
             var progress = Math.round(currentProgress * 10000 / totalBytes) / 100;
-            $('#progress').text(progress);
-            $('#progress-bar').val(progress);
+            $('#progress-bar').text(progress+"%");
+            $('#progress-bar').css("width",progress+"%");
         }, 0, 500000);
     });
 }
@@ -99,10 +109,14 @@ var loadDelta = function (tree, cursor, done, progress, currentBytes, counter) {
 
 var THRESHOLD = 20;
 function cleanUpTree(node){
+    console.log("before. children: ",node.children.length,", leaves: ",node.leaves.length);
     if(node.leaves.length > THRESHOLD){
         var size = node.getXLargestChildrenSize(THRESHOLD);
+        console.log("size: ",size);
         node.combineLeaves(size);
     }
+    console.log("after. children: ",node.children.length,", leaves: ",node.leaves.length);
+
     node.nodes.forEach(cleanUpTree);
 }
 
@@ -110,7 +124,7 @@ function loadChart(tree) {
     cleanUpTree(tree);
 
     initializeChart(tree.toArray());
-    console.log(tree.toArray())
+    console.log(tree.toArray());
 }
 
 function getReadableFileSizeString(fileSizeInBytes) {

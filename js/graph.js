@@ -14,7 +14,7 @@ function initializeChart(root) {
         .clamp(true)
         .range([90, 20]);
 
-    var svg = d3.select("body").append("svg")
+    var svg = d3.select("#content").append("svg")
         .attr("width", margin.left + margin.right)
         .attr("height", margin.top + margin.bottom)
         .append("g")
