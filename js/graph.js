@@ -82,7 +82,12 @@ function initializeChart(root) {
         .each(function (d) {
             this._current = updateArc(d);
         })
-        .on("click", zoomIn);
+        .on("click", zoomIn)
+
+    path.append("title")
+        .text(function(d){
+            return d.name
+        });
 
     function zoomIn(p) {
         if (p.depth > 1) p = p.parent;
@@ -149,6 +154,12 @@ function initializeChart(root) {
                 .on("click", zoomIn)
                 .each(function (d) {
                     this._current = enterArc(d);
+                });
+
+
+            path.append("title")
+                .text(function(d){
+                    return d.name
                 });
 
             path.transition()
