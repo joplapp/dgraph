@@ -86,7 +86,7 @@ function initializeChart(root) {
 
     path.append("title")
         .text(function(d){
-            return d.name
+            return d.name + ": "+ getReadableFileSizeString(d.size);
         });
 
     function zoomIn(p) {
@@ -159,7 +159,7 @@ function initializeChart(root) {
 
             path.append("title")
                 .text(function(d){
-                    return d.name
+                    return d.name + ": "+ getReadableFileSizeString(d.size);
                 });
 
             path.transition()

@@ -15,6 +15,7 @@ var Tree = function(name){
     this.nodes = [];
     this.dict = {};
     this.name = name;
+    this.size = 0;
 };
 
 Tree.prototype.addNode = function(name){
@@ -71,7 +72,8 @@ Tree.prototype.getNode = function(name){
 Tree.prototype.toArray = function(){
     var result = {
         name: this.name,
-        children: []
+        children: [],
+        size: 0
     };
 
     this.children.forEach(function(child){
@@ -79,9 +81,12 @@ Tree.prototype.toArray = function(){
             result.children.push({
                 name: child.name,
                 size: child.size
-            })
+            });
+            result.size += child.size;
         } else {
-            result.children.push(child.toArray())
+            var childResult = child.toArray();
+            result.children.push(childResult);
+            result.size += childResult.size;
         }
     });
 
