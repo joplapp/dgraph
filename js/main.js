@@ -24,7 +24,7 @@ function authenticate(){
 
         loadDelta(tree, undefined, function(){
             loadChart(tree)
-        }, 10000);
+        }, 200000);
     });
 }
 
@@ -34,7 +34,7 @@ var followPath = function(tree, path, method, attrib){
 
     for(var i=1; i<folders.length-1; i++){
         newNode = node.getNode(folders[i]);
-        if(!node){
+        if (!newNode) {
             newNode = node.addNode(folders[i]);
         }
         node = newNode;
@@ -44,15 +44,18 @@ var followPath = function(tree, path, method, attrib){
 };
 
 var addFolder = function(tree, path){
+    // console.log(path+ " was added.");
     followPath(tree, path, "addNode");
 };
 var addFile = function(tree, path, size){
+    // console.log(path+ " was added.");
     followPath(tree, path, "addChild", size);
 };
 
 var loadDelta = function(tree, cursor, done, counter){
     if(counter < 0){
         done();
+        return;
     }
     client.delta(cursor, function(err, result){
         if(!result.changes){
