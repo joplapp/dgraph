@@ -11,6 +11,8 @@ var Leaf = function(name, size){
 
 var Tree = function(name){
     this.children = [];
+    this.leaves = [];
+    this.nodes = [];
     this.dict = {};
     this.name = name;
 };
@@ -18,13 +20,47 @@ var Tree = function(name){
 Tree.prototype.addNode = function(name){
     var node = new Tree(name);
     this.children.push(node);
+    this.nodes.push(node);
     this.dict[name] = node;
 
     return node;
 };
 
 Tree.prototype.addChild = function(name, size){
-    this.children.push(new Leaf(name, size))
+    var leaf = new Leaf(name, size);
+    this.children.push(leaf);
+    this.leaves.push(leaf);
+};
+
+
+Tree.prototype.getXLargestChildrenSize = function(childIndex){
+    var sizes = this.leaves.map(function(leaf){
+        return leaf.size;
+    });
+
+    sizes = sizes.sort();
+
+    return sizes[sizes.length-childIndex] ? sizes[sizes.length-childIndex] : 0;
+};
+
+Tree.prototype.combineLeaves = function(threshold){
+    var counter = 0;
+    var totalSize = 0;
+
+    for(var i=0; i<this.leaves.size; i++) {
+        var item = this.leaves[i];
+        if (item.size < threshold) {
+            counter++;
+            totalSize += item.size;
+
+            this.leaves.splice(i, 1);
+            i--;
+        }
+    }
+
+    if(counter){
+        this.addChild(counter+" more files", totalSize);
+    }
 };
 
 Tree.prototype.getNode = function(name){

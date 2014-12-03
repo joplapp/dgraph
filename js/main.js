@@ -67,6 +67,7 @@ var addFile = function(tree, path, size){
     followPath(tree, path, "addChild", size);
 };
 
+var SMALL_FILE_THRESHOLD = 1000; //bytes
 var loadDelta = function (tree, cursor, done, progress, currentBytes, counter) {
     progress(currentBytes);
 
@@ -79,8 +80,9 @@ var loadDelta = function (tree, cursor, done, progress, currentBytes, counter) {
             done();
             return;
         }
+
         result.changes.forEach(function(item){
-            if(item.stat.isFolder){
+            if(item.stat.isFolder) {
                 addFolder(tree, item.path)
             } else {
                 addFile(tree, item.path, item.stat.size);
@@ -95,7 +97,18 @@ var loadDelta = function (tree, cursor, done, progress, currentBytes, counter) {
     })
 };
 
+var THRESHOLD = 20;
+function cleanUpTree(node){
+    if(node.leaves.length > THRESHOLD){
+        var size = node.getXLargestChildrenSize(THRESHOLD);
+        node.combineLeaves(size);
+    }
+    node.nodes.forEach(cleanUpTree);
+}
+
 function loadChart(tree) {
+    cleanUpTree(tree);
+    
     initializeChart(tree.toArray());
     console.log(tree.toArray())
 }
