@@ -3,7 +3,7 @@
  */
 
 
-var client = new Dropbox.Client({ key: "your-key-here" });
+var client = new Dropbox.Client({ key: "f629oxf1xdmgu0g" });
 
 function authenticate(){
     client.authenticate(function(error, client) {
