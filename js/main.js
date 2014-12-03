@@ -11,7 +11,7 @@ if ((host == window.location.host) && (window.location.protocol != "https:")){
 }
 
 $( document ).ready(function() {
-    $('#dropbox-connect').click(function () {
+    $('.btn-dropbox').click(function () {
         authenticate();
     });
 });
@@ -43,7 +43,7 @@ function authenticate(){
 
         loadDelta(tree, undefined, function(){
             $("#progress-box").hide();
-            $("#tipp").show();
+            $("#hint").show();
             loadChart(tree);
             window.tree = tree;
         }, function (currentProgress) {
