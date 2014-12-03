@@ -22,42 +22,52 @@ function authenticate(){
 
         var tree = new Tree("main");
 
-        addFolderToTree(client, tree, "", 0, function(){
+        loadDelta(tree, undefined, function(){
             loadChart(tree)
         });
     });
 }
 
-var addFolderToTree = function (client, tree, folder, level, done) {
-    if (level > 2) {
-        done();
-        return;
+var addFolder = function(tree, path){
+    var folders = path.split("/");
+    var node = tree;
+
+    for(var i=1; i<folders.length-1; i++){
+        node = node.getNode(folders[i]);
     }
 
-    var open = 0;
-    var subRequestDone = function(){
-        if(--open == 0) {
-            done();
-        }
-    };
-    client.readdir(folder, function (showError, names, folder, entries) {
-        var subtree = tree.addNode(folder.name);
+    node.addNode(folders.pop());
+};
+var addFile = function(tree, path, size){
+    var folders = path.split("/");
+    var node = tree;
 
-        entries.forEach(function (entry) {
-            if (entry.isFile) {
-                console.log(entry.name, entry.size);
-                subtree.addChild(entry.name, entry.size);
-            } else {
-                open++;
-                addFolderToTree(client, subtree, entry.path, level + 1, subRequestDone);
-            }
-        });
-
-        open == 0 && done();
-
-    });
+    for(var i=1; i<folders.length-1; i++){
+        node = node.getNode(folders[i]);
+    }
+    node.addChild(folders.pop(), size);
 };
 
+var loadDelta = function(tree, cursor, done){
+
+    client.delta(cursor, function(err, result){
+        if(!result.changes){
+            return;
+        }
+        result.changes.forEach(function(item){
+            if(item.stat.isFolder){
+                addFolder(tree, item.path)
+            } else {
+                addFile(tree, item.path, item.stat.size)
+            }
+        });
+        if(result.shouldPullAgain) {
+            loadDelta(tree, result.cursorTag, done)
+        } else {
+            done();
+        }
+    })
+};
 
 function loadChart(tree) {
     initializeChart(tree.toArray());

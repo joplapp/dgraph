@@ -11,18 +11,24 @@ var Leaf = function(name, size){
 
 var Tree = function(name){
     this.children = [];
+    this.dict = {};
     this.name = name;
 };
 
 Tree.prototype.addNode = function(name){
     var node = new Tree(name);
     this.children.push(node);
+    this.dict[name] = node;
 
     return node;
 };
 
 Tree.prototype.addChild = function(name, size){
     this.children.push(new Leaf(name, size))
+};
+
+Tree.prototype.getNode = function(name){
+    return this.dict[name];
 };
 
 Tree.prototype.toArray = function(){
