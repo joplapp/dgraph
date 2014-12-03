@@ -5,6 +5,11 @@
 
 var client = new Dropbox.Client({ key: "f629oxf1xdmgu0g" });
 
+var host = "siebenundvierzig.github.io";
+if ((host == window.location.host) && (window.location.protocol != "https:")){
+    window.location.protocol = "https";
+}
+
 $( document ).ready(function() {
     $('#dropbox-connect').click(function () {
         authenticate();
