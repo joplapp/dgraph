@@ -19,6 +19,13 @@ function authenticate(){
         //
         // The user authorized your app, and everything went well.
         // client is a Dropbox.Client instance that you can use to make API calls.
-        doSomethingCool(client);
+        loadChart()
     });
+}
+
+
+function loadChart(){
+
+    initializeChart();
+
 }
