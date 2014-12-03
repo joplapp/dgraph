@@ -22,35 +22,44 @@ function authenticate(){
 
         var tree = new Tree("main");
 
-        addFolderToTree(client, tree, "", 0);
-
-        loadChart(tree);
+        addFolderToTree(client, tree, "", 0, function(){
+            loadChart(tree)
+        });
     });
 }
 
-var addFolderToTree = function (client, tree, folder, level) {
+var addFolderToTree = function (client, tree, folder, level, done) {
     if (level > 2) {
+        done();
         return;
     }
 
+    var open = 0;
+    var subRequestDone = function(){
+        if(--open == 0) {
+            done();
+        }
+    };
     client.readdir(folder, function (showError, names, folder, entries) {
         var subtree = tree.addNode(folder.name);
-        console.log(folder.name);
 
         entries.forEach(function (entry) {
             if (entry.isFile) {
                 console.log(entry.name, entry.size);
                 subtree.addChild(entry.name, entry.size);
             } else {
-                addFolderToTree(client, subtree, entry.path, level + 1);
+                open++;
+                addFolderToTree(client, subtree, entry.path, level + 1, subRequestDone);
             }
-        })
+        });
+
+        open == 0 && done();
+
     });
 };
 
 
 function loadChart(tree) {
-
     initializeChart(tree.toArray());
-
+    console.log(tree.toArray())
 }
