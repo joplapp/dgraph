@@ -19,12 +19,27 @@ function authenticate(){
         //
         // The user authorized your app, and everything went well.
         // client is a Dropbox.Client instance that you can use to make API calls.
+        var totalBytes = 0;
+
+        client.getAccountInfo(function (error, accountInfo) {
+            totalBytes = accountInfo.usedQuota;
+            console.log(totalBytes);
+        });
 
         var tree = new Tree("main");
 
         loadDelta(tree, undefined, function(){
-            loadChart(tree)
-        }, 200000);
+            $("#progress-box").hide();
+            loadChart(tree);
+        }, function (currentProgress) {
+            console.log(currentProgress / totalBytes);
+            if (totalBytes == 0) {
+                return;
+            }
+            var progress = Math.round(currentProgress * 10000 / totalBytes) / 100;
+            $('#progress').text(progress);
+            $('#progress-bar').val(progress);
+        }, 0, 500000);
     });
 }
 
@@ -52,7 +67,9 @@ var addFile = function(tree, path, size){
     followPath(tree, path, "addChild", size);
 };
 
-var loadDelta = function(tree, cursor, done, counter){
+var loadDelta = function (tree, cursor, done, progress, currentBytes, counter) {
+    progress(currentBytes);
+
     if(counter < 0){
         done();
         return;
@@ -66,11 +83,12 @@ var loadDelta = function(tree, cursor, done, counter){
             if(item.stat.isFolder){
                 addFolder(tree, item.path)
             } else {
-                addFile(tree, item.path, item.stat.size)
+                addFile(tree, item.path, item.stat.size);
+                currentBytes += item.stat.size;
             }
         });
         if(result.shouldPullAgain) {
-            loadDelta(tree, result.cursorTag, done, counter - result.changes.length)
+            loadDelta(tree, result.cursorTag, done, progress, currentBytes, counter - result.changes.length)
         } else {
             done();
         }
