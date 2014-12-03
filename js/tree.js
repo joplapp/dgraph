@@ -27,7 +27,7 @@ Tree.prototype.addChild = function(name, size){
 
 Tree.prototype.toArray = function(){
     var result = {
-        name: name,
+        name: this.name,
         children: []
     };
 
