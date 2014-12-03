@@ -2,7 +2,7 @@
  * Created by Johannes on 02.12.2014.
  */
 
-function initializeChart() {
+function initializeChart(root) {
 
     var margin = {top: 350, right: 480, bottom: 350, left: 480},
         radius = Math.min(margin.top, margin.right, margin.bottom, margin.left) - 10;
@@ -40,126 +40,124 @@ function initializeChart() {
             return radius / 3 * (d.depth + 1) - 1;
         });
 
-    d3.json("/dgraph/js/datasample.json", function (error, root) {
-        console.log(error, root)
-        // Compute the initial layout on the entire tree to sum sizes.
-        // Also compute the full name and fill color for each node,
-        // and stash the children so they can be restored as we descend.
-        partition
-            .value(function (d) {
-                return d.size;
-            })
-            .nodes(root)
-            .forEach(function (d) {
-                d._children = d.children;
-                d.sum = d.value;
-                d.key = key(d);
-                d.fill = fill(d);
-            });
+    console.log(error, root)
+    // Compute the initial layout on the entire tree to sum sizes.
+    // Also compute the full name and fill color for each node,
+    // and stash the children so they can be restored as we descend.
+    partition
+        .value(function (d) {
+            return d.size;
+        })
+        .nodes(root)
+        .forEach(function (d) {
+            d._children = d.children;
+            d.sum = d.value;
+            d.key = key(d);
+            d.fill = fill(d);
+        });
 
-        // Now redefine the value function to use the previously-computed sum.
-        partition
-            .children(function (d, depth) {
-                return depth < 2 ? d._children : null;
-            })
-            .value(function (d) {
-                return d.sum;
-            });
+    // Now redefine the value function to use the previously-computed sum.
+    partition
+        .children(function (d, depth) {
+            return depth < 2 ? d._children : null;
+        })
+        .value(function (d) {
+            return d.sum;
+        });
 
-        var center = svg.append("circle")
-            .attr("r", radius / 3)
-            .on("click", zoomOut);
+    var center = svg.append("circle")
+        .attr("r", radius / 3)
+        .on("click", zoomOut);
 
-        center.append("title")
-            .text("zoom out");
+    center.append("title")
+        .text("zoom out");
 
-        var path = svg.selectAll("path")
-            .data(partition.nodes(root).slice(1))
-            .enter().append("path")
-            .attr("d", arc)
-            .style("fill", function (d) {
-                return d.fill;
-            })
-            .each(function (d) {
-                this._current = updateArc(d);
-            })
-            .on("click", zoomIn);
+    var path = svg.selectAll("path")
+        .data(partition.nodes(root).slice(1))
+        .enter().append("path")
+        .attr("d", arc)
+        .style("fill", function (d) {
+            return d.fill;
+        })
+        .each(function (d) {
+            this._current = updateArc(d);
+        })
+        .on("click", zoomIn);
 
-        function zoomIn(p) {
-            if (p.depth > 1) p = p.parent;
-            if (!p.children) return;
-            zoom(p, p);
+    function zoomIn(p) {
+        if (p.depth > 1) p = p.parent;
+        if (!p.children) return;
+        zoom(p, p);
+    }
+
+    function zoomOut(p) {
+        if (!p.parent) return;
+        zoom(p.parent, p);
+    }
+
+    // Zoom to the specified new root.
+    function zoom(root, p) {
+        if (document.documentElement.__transition__) return;
+
+        // Rescale outside angles to match the new layout.
+        var enterArc,
+            exitArc,
+            outsideAngle = d3.scale.linear().domain([0, 2 * Math.PI]);
+
+        function insideArc(d) {
+            return p.key > d.key
+                ? {depth: d.depth - 1, x: 0, dx: 0} : p.key < d.key
+                ? {depth: d.depth - 1, x: 2 * Math.PI, dx: 0}
+                : {depth: 0, x: 0, dx: 2 * Math.PI};
         }
 
-        function zoomOut(p) {
-            if (!p.parent) return;
-            zoom(p.parent, p);
+        function outsideArc(d) {
+            return {depth: d.depth + 1, x: outsideAngle(d.x), dx: outsideAngle(d.x + d.dx) - outsideAngle(d.x)};
         }
 
-        // Zoom to the specified new root.
-        function zoom(root, p) {
-            if (document.documentElement.__transition__) return;
+        center.datum(root);
 
-            // Rescale outside angles to match the new layout.
-            var enterArc,
-                exitArc,
-                outsideAngle = d3.scale.linear().domain([0, 2 * Math.PI]);
+        // When zooming in, arcs enter from the outside and exit to the inside.
+        // Entering outside arcs start from the old layout.
+        if (root === p) enterArc = outsideArc, exitArc = insideArc, outsideAngle.range([p.x, p.x + p.dx]);
 
-            function insideArc(d) {
-                return p.key > d.key
-                    ? {depth: d.depth - 1, x: 0, dx: 0} : p.key < d.key
-                    ? {depth: d.depth - 1, x: 2 * Math.PI, dx: 0}
-                    : {depth: 0, x: 0, dx: 2 * Math.PI};
-            }
+        path = path.data(partition.nodes(root).slice(1), function (d) {
+            return d.key;
+        });
 
-            function outsideArc(d) {
-                return {depth: d.depth + 1, x: outsideAngle(d.x), dx: outsideAngle(d.x + d.dx) - outsideAngle(d.x)};
-            }
+        // When zooming out, arcs enter from the inside and exit to the outside.
+        // Exiting outside arcs transition to the new layout.
+        if (root !== p) enterArc = insideArc, exitArc = outsideArc, outsideAngle.range([p.x, p.x + p.dx]);
 
-            center.datum(root);
+        d3.transition().duration(d3.event.altKey ? 7500 : 750).each(function () {
+            path.exit().transition()
+                .style("fill-opacity", function (d) {
+                    return d.depth === 1 + (root === p) ? 1 : 0;
+                })
+                .attrTween("d", function (d) {
+                    return arcTween.call(this, exitArc(d));
+                })
+                .remove();
 
-            // When zooming in, arcs enter from the outside and exit to the inside.
-            // Entering outside arcs start from the old layout.
-            if (root === p) enterArc = outsideArc, exitArc = insideArc, outsideAngle.range([p.x, p.x + p.dx]);
+            path.enter().append("path")
+                .style("fill-opacity", function (d) {
+                    return d.depth === 2 - (root === p) ? 1 : 0;
+                })
+                .style("fill", function (d) {
+                    return d.fill;
+                })
+                .on("click", zoomIn)
+                .each(function (d) {
+                    this._current = enterArc(d);
+                });
 
-            path = path.data(partition.nodes(root).slice(1), function (d) {
-                return d.key;
-            });
-
-            // When zooming out, arcs enter from the inside and exit to the outside.
-            // Exiting outside arcs transition to the new layout.
-            if (root !== p) enterArc = insideArc, exitArc = outsideArc, outsideAngle.range([p.x, p.x + p.dx]);
-
-            d3.transition().duration(d3.event.altKey ? 7500 : 750).each(function () {
-                path.exit().transition()
-                    .style("fill-opacity", function (d) {
-                        return d.depth === 1 + (root === p) ? 1 : 0;
-                    })
-                    .attrTween("d", function (d) {
-                        return arcTween.call(this, exitArc(d));
-                    })
-                    .remove();
-
-                path.enter().append("path")
-                    .style("fill-opacity", function (d) {
-                        return d.depth === 2 - (root === p) ? 1 : 0;
-                    })
-                    .style("fill", function (d) {
-                        return d.fill;
-                    })
-                    .on("click", zoomIn)
-                    .each(function (d) {
-                        this._current = enterArc(d);
-                    });
-
-                path.transition()
-                    .style("fill-opacity", 1)
-                    .attrTween("d", function (d) {
-                        return arcTween.call(this, updateArc(d));
-                    });
-            });
-        }
-    });
+            path.transition()
+                .style("fill-opacity", 1)
+                .attrTween("d", function (d) {
+                    return arcTween.call(this, updateArc(d));
+                });
+        });
+    }
 
     function key(d) {
         var k = [], p = d;
