@@ -53,6 +53,7 @@ Tree.prototype.combineLeaves = function(threshold){
             counter++;
             totalSize += item.size;
 
+            this.children.splice(this.children.indexOf(item), 1);
             this.leaves.splice(i, 1);
             i--;
         }

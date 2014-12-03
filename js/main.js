@@ -108,7 +108,7 @@ function cleanUpTree(node){
 
 function loadChart(tree) {
     cleanUpTree(tree);
-    
+
     initializeChart(tree.toArray());
     console.log(tree.toArray())
 }
