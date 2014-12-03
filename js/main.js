@@ -19,20 +19,38 @@ function authenticate(){
         //
         // The user authorized your app, and everything went well.
         // client is a Dropbox.Client instance that you can use to make API calls.
-        addFolderToTree(client, tree, "");
+
+        var tree = new Tree("main");
+
+        addFolderToTree(client, tree, "", 0);
+
+        loadChart();
     });
 }
 
-var addFolderToTree = function (client, tree, folder) {
-    // TODO add folder to tree
+var addFolderToTree = function (client, tree, folder, level) {
+    if (level > 2) {
+        return;
+    }
 
-    client.readdir(folder, undefined, function (apierror, names, folder, entries) {
-        entries.forEach(function () {
-            if(this.isFile){
-                // TODO add file to tree
-            }else{
-                readFolder(client, tree, this);
+    client.readdir(folder, function (showError, names, folder, entries) {
+        var subtree = tree.addNode(folder.name);
+        console.log(folder.name);
+
+        entries.forEach(function (entry) {
+            if (entry.isFile) {
+                console.log(entry.name, entry.size);
+                subtree.addChild(entry.name, entry.size);
+            } else {
+                addFolderToTree(client, subtree, entry.path, level + 1);
             }
         })
     });
+};
+
+
+function loadChart() {
+
+    initializeChart();
+
 }
