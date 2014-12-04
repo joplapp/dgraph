@@ -168,12 +168,6 @@ function initializeChart(root) {
         });
     }
 
-    function key(d) {
-        var k = [], p = d;
-        while (p.depth) k.push(p.name), p = p.parent;
-        return k.reverse().join(".");
-    }
-
     function fill(d) {
         var p = d;
         while (p.depth > 1) p = p.parent;
@@ -196,19 +190,30 @@ function initializeChart(root) {
 
     d3.select(self.frameElement).style("height", margin.top + margin.bottom + "px");
 
-
     function update(){
         partition
             .nodes(root)
             .forEach(function (d) {
                 d._children = d.__children;
-                d.fill = fill(d);
+            });
+        partition.children(function (d) {   //make sure to update all children in the next step
+                return d._children;
+            });
+        partition.nodes(root)
+            .forEach(function (d) {
+                d.fill = fill(d)
+            });
+        partition.children(function (d, depth) {
+                return depth < 2 ? d._children : null;  //reset to only show two inner circles
             });
 
         path = path.data(partition.nodes(root).slice(1), function (d) {
             return d.key;
         });
 
+        path.enter().append("path")
+            .attr("d", arc)
+            .on("click", zoomIn);
 
         path.attr("d", arc)
             .style("fill", function (d) {
@@ -218,20 +223,12 @@ function initializeChart(root) {
                 this._current = updateArc(d);
             });
 
-        path.enter().append("path")
-            .attr("d", arc)
-            .style("fill", function (d) {
-                return d.fill;
-            })
-            .each(function (d) {
-                this._current = updateArc(d);
-            })
-            .on("click", zoomIn);
-
+        path.append("title")
+            .text(function(d){
+                return d.name + ": "+ getReadableFileSizeString(d.size);
+            });
 
         path.exit().remove();
-
-        console.log(root)
     }
     return update;
 }
