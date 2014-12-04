@@ -10,7 +10,7 @@ function initializeChart(root) {
     var hue = d3.scale.category10();
 
     var luminance = d3.scale.sqrt()
-        .domain([0, 1e6])
+        .domain([0, 1e7])
         .clamp(true)
         .range([90, 20]);
 
@@ -22,7 +22,7 @@ function initializeChart(root) {
 
     var partition = d3.layout.partition()
         .sort(function (a, b) {
-            return d3.ascending(a.name, b.name);
+            return d3.ascending(a.size, b.size);
         })
         .size([2 * Math.PI, radius]);
 
@@ -51,8 +51,6 @@ function initializeChart(root) {
         .nodes(root)
         .forEach(function (d) {
             d._children = d.children;
-            d.sum = d.value;
-            d.key = key(d);
             d.fill = fill(d);
         });
 
@@ -62,7 +60,7 @@ function initializeChart(root) {
             return depth < 2 ? d._children : null;
         })
         .value(function (d) {
-            return d.sum;
+            return d.size;
         });
 
     var center = svg.append("circle")
@@ -180,7 +178,7 @@ function initializeChart(root) {
         var p = d;
         while (p.depth > 1) p = p.parent;
         var c = d3.lab(hue(p.name));
-        c.l = luminance(d.sum);
+        c.l = luminance(d.size);
         return c;
     }
 
@@ -197,4 +195,43 @@ function initializeChart(root) {
     }
 
     d3.select(self.frameElement).style("height", margin.top + margin.bottom + "px");
+
+
+    function update(){
+        partition
+            .nodes(root)
+            .forEach(function (d) {
+                d._children = d.__children;
+                d.fill = fill(d);
+            });
+
+        path = path.data(partition.nodes(root).slice(1), function (d) {
+            return d.key;
+        });
+
+
+        path.attr("d", arc)
+            .style("fill", function (d) {
+                return d.fill;
+            })
+            .each(function (d) {
+                this._current = updateArc(d);
+            });
+
+        path.enter().append("path")
+            .attr("d", arc)
+            .style("fill", function (d) {
+                return d.fill;
+            })
+            .each(function (d) {
+                this._current = updateArc(d);
+            })
+            .on("click", zoomIn);
+
+
+        path.exit().remove();
+
+        console.log(root)
+    }
+    return update;
 }
