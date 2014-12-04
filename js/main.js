@@ -10,56 +10,62 @@ if ((host == window.location.host) && (window.location.protocol != "https:")){
     window.location.protocol = "https";
 }
 
-$( document ).ready(function() {
-    $('.btn-dropbox').click(function () {
-        authenticate();
-    });
-});
+$( document ).ready(authenticate);
 
 function authenticate(){
-    client.authenticate(function(error, client) {
+    // Try to use cached credentials.
+    client.authenticate({interactive: false}, function(error, client) {
         if (error) {
-            // Replace with a call to your own error-handling code.
-            //
-            // Don't forget to return from the callback, so you don't execute the code
-            // that assumes everything went well.
             return showError(error);
         }
-
-        // Replace with a call to your own application code.
-        //
-        // The user authorized your app, and everything went well.
-        // client is a Dropbox.Client instance that you can use to make API calls.
-        $("#dropbox-connect").hide();
-        $("#progress-box").show();
-        var totalBytes = 0;
-
-        client.getAccountInfo(function (error, accountInfo) {
-            totalBytes = accountInfo.usedQuota;
-            console.log(totalBytes);
-        });
-
-        var tree = new Tree("main");
-
-        loadDelta(tree, undefined, function(){
-            setTimeout(function(){
-                $("#progress-box").hide();
-                $("#hint").show();
-                finalizeChart(tree);
-            }, 300);
-        }, function (currentProgress) {
-            console.log(currentProgress / totalBytes);
-            if (totalBytes == 0) {
-                return;
-            }
-            if(currentProgress){
-                loadChartStep(tree, totalBytes - currentProgress);
-            }
-            var progress = Math.round(currentProgress * 10000 / totalBytes) / 100;
-            $('#progress-bar').text(progress+"%");
-            $('#progress-bar').css("width",progress+"%");
-        }, 0, 500000);
+        if (client.isAuthenticated()) {
+            // Cached credentials.
+            loadGraph();
+        } else {
+            // show and set up the "Sign into Dropbox" button
+            $('#dropbox-connect').show();
+            $('.btn-dropbox').click(function() {
+                client.authenticate(function(error) {
+                    if (error) {
+                        return showError(error);
+                    }
+                    loadGraph();
+                });
+            });
+        }
     });
+}
+
+function loadGraph(){
+    $("#dropbox-connect").hide();
+    $("#progress-box").show();
+    var totalBytes = 0;
+
+    client.getAccountInfo(function (error, accountInfo) {
+        totalBytes = accountInfo.usedQuota;
+        console.log(totalBytes);
+    });
+
+    var tree = new Tree("main");
+
+    loadDelta(tree, undefined, function(){
+        setTimeout(function(){
+            $("#progress-box").hide();
+            $("#hint").show();
+            finalizeChart(tree);
+        }, 300);
+    }, function (currentProgress) {
+        console.log(currentProgress / totalBytes);
+        if (totalBytes == 0) {
+            return;
+        }
+        if(currentProgress){
+            loadChartStep(tree, totalBytes - currentProgress);
+        }
+        var progress = Math.round(currentProgress * 10000 / totalBytes) / 100;
+        $('#progress-bar').text(progress+"%");
+        $('#progress-bar').css("width",progress+"%");
+    }, 0, 500000);
 }
 
 var followPath = function(tree, path, method, attrib){

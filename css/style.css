@@ -7,3 +7,7 @@ circle {
     fill: none;
     pointer-events: all;
 }
+
+#dropbox-connect {
+    display: none;
+}
