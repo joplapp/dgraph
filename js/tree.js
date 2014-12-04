@@ -2,26 +2,26 @@
  * Created by Johannes on 02.12.2014.
  */
 
+var uniqueItemId = 0;
+
 var Leaf = function(name, size){
     this.name = name;
     this.size = size;
+    this.key = uniqueItemId++;
 };
 
-
-
 var Tree = function(name){
-    this.children = [];
+    this.__children = [];
     this.leaves = [];
-    this.nodes = [];
     this.dict = {};
     this.name = name;
     this.size = 0;
+    this.key = uniqueItemId++;
 };
 
 Tree.prototype.addNode = function(name){
     var node = new Tree(name);
-    this.children.push(node);
-    this.nodes.push(node);
+    this.__children.push(node);
     this.dict[name] = node;
 
     return node;
@@ -29,24 +29,77 @@ Tree.prototype.addNode = function(name){
 
 Tree.prototype.addChild = function(name, size){
     var leaf = new Leaf(name, size);
-    this.children.push(leaf);
+    this.__children.push(leaf);
     this.leaves.push(leaf);
 };
 
+Tree.prototype.removeChild = function(name){
+    var child;
+    this.__children.forEach(function(c){
+        if(c.name == name){
+            child = c;
+        }
+    });
+
+    if(child){
+        this.__children.splice(this.__children.indexOf(child), 1);
+        this.leaves.splice(this.leaves.indexOf(child), 1);
+    }
+};
 
 Tree.prototype.getXLargestChildrenSize = function(childIndex){
     var sizes = this.leaves.map(function(leaf){
         return leaf.size;
     });
 
-    sizes = sizes.sort();
+    var compf = function(a, b){
+        return a == b ? 0:
+            a > b ? -1 : 1
+    };
+    sizes = sizes.sort(compf);
 
-    return sizes[sizes.length-childIndex] ? sizes[sizes.length-childIndex] : 0;
+    return sizes.length > childIndex ? sizes[childIndex] : 0;
 };
 
-Tree.prototype.combineLeaves = function(threshold){
-    var counter = 0;
-    var totalSize = 0;
+Tree.prototype.getNode = function(name){
+    return this.dict[name];
+};
+
+Tree.prototype.computeSize = function(){
+
+    var size = 0;
+    this.__children.forEach(function(child){
+        if(child instanceof Leaf){
+            size += child.size;
+        } else {
+            size += child.computeSize();
+        }
+    });
+
+    this.size = size;
+    return size;
+};
+
+
+Tree.prototype.publishChildren = function() {
+    this.children = this.__children;
+    this.__children.forEach(function (child) {
+        if (!(child instanceof Leaf)) {
+            child.publishChildren();
+        }
+    });
+};
+
+Tree.prototype.pruneSmallFiles = function(numChildren){
+    this.__children.forEach(function(child){
+        if(!(child instanceof Leaf)){
+            child.pruneSmallFiles(numChildren);
+        }
+    });
+
+    var threshold = this.getXLargestChildrenSize(numChildren),
+        counter = 0,
+        totalSize = 0;
 
     for(var i=0; i<this.leaves.length; i++) {
         var item = this.leaves[i];
@@ -54,41 +107,13 @@ Tree.prototype.combineLeaves = function(threshold){
             counter++;
             totalSize += item.size;
 
-            this.children.splice(this.children.indexOf(item), 1);
+            this.__children.splice(this.__children.indexOf(item), 1);
             this.leaves.splice(i, 1);
             i--;
         }
     }
 
     if(counter){
-        this.addChild(counter+" more files", totalSize);
+        this.addChild(counter+" small files", totalSize);
     }
-};
-
-Tree.prototype.getNode = function(name){
-    return this.dict[name];
-};
-
-Tree.prototype.toArray = function(){
-    var result = {
-        name: this.name,
-        children: [],
-        size: 0
-    };
-
-    this.children.forEach(function(child){
-        if(child instanceof Leaf){
-            result.children.push({
-                name: child.name,
-                size: child.size
-            });
-            result.size += child.size;
-        } else {
-            var childResult = child.toArray();
-            result.children.push(childResult);
-            result.size += childResult.size;
-        }
-    });
-
-    return result;
 };

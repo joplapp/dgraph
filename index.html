@@ -20,6 +20,9 @@
     <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
     <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet"/>
     <link href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-social/4.2.1/bootstrap-social.min.css" rel="stylesheet"/>
+
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
+
 </head>
 <body>
 <div id="fb-root"></div>
@@ -31,53 +34,53 @@
     fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));</script>
 
-    <div class = "container">
-        <h1>dgraph: visualize your dropbox!</h1>
-        <p class="lead">
-            Running out of space in your Dropbox? <br>
-            Use this simple tool to find space hogs and other large files that fill your Dropbox!
-        </p>
+<div class = "container">
+    <h1>dgraph: visualize your dropbox!</h1>
+    <p class="lead">
+        Running out of space in your Dropbox? This tool helps you find your space hogs.
+    </p>
 
-        <div class="container">
-            <div id="content">
+    <div class="container">
+        <div id="content">
 
-                <div id="dropbox-connect">
-                    <a class="btn btn-block btn-social btn-dropbox">
-                        <i class="fa fa-dropbox"></i>
-                        Use with your Dropbox
-                    </a>
-                    <span><strong>First time use:</strong> You will be redirected to the Dropbox site to allow this app to use your Dropbox. Click this button <strong>again</strong> after returning!</span>
-                </div>
+            <div id="dropbox-connect">
+                <a class="btn btn-block btn-social btn-dropbox">
+                    <i class="fa fa-dropbox"></i>
+                    Use with your Dropbox
+                </a>
+                <span><strong>First time use:</strong> You will be redirected to the Dropbox site to allow this app to use your Dropbox. Click this button <strong>again</strong> after returning!</span>
+            </div>
 
             <div id="progress-box" class="progress" style="display: none">
                 <div id="progress-bar" class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%; min-width: 20px;">
                     0%
                 </div>
             </div>
-
-            <div id="hint" style="display: none; text-align: left">
-                <h4>Hints:</h4>
-                <ol>
-                    <li>Hover over the diagram with your mouse to see the name and the size of folders and files!</li>
-                    <li>Click on sections to zoom inside.</li>
-                </ol>
-            </div>
-
-
-            </div>
-
         </div>
-        <br>
 
-        <footer class="text-center">
-            Made by <a href="http://www.github.com/siebenundvierzig">Johannes</a> & <a href="http://www.github.com/sukram21">Markus</a> <br>
-            <iframe src="https://mdo.github.io/github-buttons/github-btn.html?user=mdo&repo=github-buttons&type=watch"
-                    allowtransparency="true" frameborder="0" scrolling="0" width="62" height="20"></iframe>
-            <div style="vertical-align: top" class="fb-share-button" data-href="https://github.com/siebenundvierzig/dgraph" data-layout="button"></div>
-        </footer>
 
 
     </div>
+    <br>
+
+    <footer class="text-center">
+
+        <div id="hint" style="display: none; text-align: left">
+            <h4>Hints:</h4>
+            <ol>
+                <li>Hover over the diagram with your mouse to see the name and the size of folders and files!</li>
+                <li>Click on sections to zoom inside.</li>
+            </ol>
+        </div>
+
+        Made by <a href="http://www.github.com/siebenundvierzig">Johannes</a> & <a href="http://www.github.com/sukram21">Markus</a> <br>
+        <iframe src="https://mdo.github.io/github-buttons/github-btn.html?user=mdo&repo=github-buttons&type=watch"
+                allowtransparency="true" frameborder="0" scrolling="0" width="62" height="20"></iframe>
+        <div style="vertical-align: top" class="fb-share-button" data-href="https://github.com/siebenundvierzig/dgraph" data-layout="button"></div>
+    </footer>
+
+
+</div>
 
 </body>
 </html>

@@ -42,14 +42,18 @@ function authenticate(){
         var tree = new Tree("main");
 
         loadDelta(tree, undefined, function(){
-            $("#progress-box").hide();
-            $("#hint").show();
-            loadChart(tree);
-            window.tree = tree;
+            setTimeout(function(){
+                $("#progress-box").hide();
+                $("#hint").show();
+                finalizeChart(tree);
+            }, 300);
         }, function (currentProgress) {
             console.log(currentProgress / totalBytes);
             if (totalBytes == 0) {
                 return;
+            }
+            if(currentProgress){
+                loadChartStep(tree, totalBytes - currentProgress);
             }
             var progress = Math.round(currentProgress * 10000 / totalBytes) / 100;
             $('#progress-bar').text(progress+"%");
@@ -82,7 +86,6 @@ var addFile = function(tree, path, size){
     followPath(tree, path, "addChild", size);
 };
 
-var SMALL_FILE_THRESHOLD = 1000; //bytes
 var loadDelta = function (tree, cursor, done, progress, currentBytes, counter) {
     progress(currentBytes);
 
@@ -112,24 +115,39 @@ var loadDelta = function (tree, cursor, done, progress, currentBytes, counter) {
     })
 };
 
-var THRESHOLD = 20;
-function cleanUpTree(node){
-    console.log("before. children: ",node.children.length,", leaves: ",node.leaves.length);
-    if(node.leaves.length > THRESHOLD){
-        var size = node.getXLargestChildrenSize(THRESHOLD);
-        console.log("size: ",size);
-        node.combineLeaves(size);
-    }
-    console.log("after. children: ",node.children.length,", leaves: ",node.leaves.length);
+var MAX_NUM_LEAVES = 50;
 
-    node.nodes.forEach(cleanUpTree);
+var lastTime,
+    updateChart;
+function loadChartStep(tree, missingBytes) {
+    var now = Date.now();
+    if(lastTime && now - lastTime < 100) {  //prevent updating to often
+        return;
+    }
+    lastTime = now;
+
+    tree.addChild("waiting", missingBytes);  // add additional node with remaining bytes
+
+    tree.computeSize();
+    tree.pruneSmallFiles(MAX_NUM_LEAVES);
+    tree.computeSize();
+    tree.publishChildren();
+
+    if(updateChart){
+        updateChart();
+    } else {
+        updateChart = initializeChart(tree);
+    }
+    tree.removeChild("waiting", missingBytes);
 }
 
-function loadChart(tree) {
-    cleanUpTree(tree);
+function finalizeChart(tree){
+    tree.computeSize();
+    tree.pruneSmallFiles(MAX_NUM_LEAVES);
+    tree.computeSize();
+    tree.publishChildren();
 
-    initializeChart(tree.toArray());
-    console.log(tree.toArray());
+    updateChart ? updateChart() : initializeChart(tree);
 }
 
 function getReadableFileSizeString(fileSizeInBytes) {
