@@ -75,7 +75,7 @@ function initializeChart(root) {
     var centerFolderName = elemEnter.append("text")
         .attr("class", "centerText")
         .attr("id", "centerFolderName")
-        .text((root.name).trunc(10,2));
+        .text((root.name).trunc(20,2));
 
     var centerFolderSize = elemEnter.append("text")
         .attr("class", "centerText")
@@ -153,7 +153,7 @@ function initializeChart(root) {
         }
 
         center.datum(root);
-        centerFolderName.text((root.name).trunc(10,2));
+        centerFolderName.text((root.name).trunc(20,2));
         centerFolderSize.text(getReadableFileSizeString(root.size));
         centerLink.attr("xlink:href", "http://www.dropbox.com/home"+root.getPath());
 
