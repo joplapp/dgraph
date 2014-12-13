@@ -12,6 +12,7 @@ var Leaf = function(name, size){
 
 var Tree = function(name){
     this.__children = [];
+    this.removedSmallChildren = [];
     this.leaves = [];
     this.dict = {};
     this.name = name;
@@ -97,6 +98,12 @@ Tree.prototype.pruneSmallFiles = function(numChildren){
         }
     });
 
+    // add children that might have been deleted during previous runs
+    Array.prototype.push.apply(this.__children, this.removedSmallChildren);
+    Array.prototype.push.apply(this.leaves, this.removedSmallChildren);
+
+    this.removedSmallChildren.length = 0; //clear array
+
     var threshold = this.getXLargestChildrenSize(numChildren),
         counter = 0,
         totalSize = 0;
@@ -109,6 +116,8 @@ Tree.prototype.pruneSmallFiles = function(numChildren){
 
             this.__children.splice(this.__children.indexOf(item), 1);
             this.leaves.splice(i, 1);
+
+            this.removedSmallChildren.push(item);
             i--;
         }
     }
