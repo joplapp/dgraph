@@ -127,10 +127,10 @@ function initializeChart(root) {
         .on('mouseover', tip.show)
         .on('mouseout', tip.hide);
 
-    path.append("title")
+/*    path.append("title")
         .text(function(d){
             return d.name + ": "+ getReadableFileSizeString(d.size);
-        });
+        });*/
 
     function zoomIn(p) {
         if (p.depth > 1) p = p.parent;
@@ -202,11 +202,13 @@ function initializeChart(root) {
                     this._current = enterArc(d);
                 });
 
+            path.on('mouseover', tip.show)
+                .on('mouseout', tip.hide);
 
-            path.append("title")
+/*            path.append("title")
                 .text(function(d){
                     return d.name + ": "+ getReadableFileSizeString(d.size);
-                });
+                });*/
 
             path.transition()
                 .style("fill-opacity", 1)
@@ -271,10 +273,13 @@ function initializeChart(root) {
                 this._current = updateArc(d);
             });
 
-        path.append("title")
+        path.on('mouseover', tip.show)
+            .on('mouseout', tip.hide);
+
+/*        path.append("title")
             .text(function(d){
                 return d.name + ": "+ getReadableFileSizeString(d.size);
-            });
+            });*/
 
         path.exit().remove();
     }
