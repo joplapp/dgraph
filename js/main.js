@@ -121,7 +121,7 @@ var loadDelta = function (tree, cursor, done, progress, currentBytes, counter) {
     })
 };
 
-var MAX_NUM_LEAVES = 50;
+var MAX_NUM_LEAVES = 25;
 
 var lastTime,
     updateChart;

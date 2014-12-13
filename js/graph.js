@@ -97,7 +97,7 @@ function initializeChart(root) {
 
     centerLinkGroup.append('text')
         .attr("dy",48)
-        .attr("dx", -80)
+        .attr("dx", -75)
         .attr("class", "centerText")
         .attr('font-family', 'FontAwesome')
         .text('\uf08e');
@@ -109,10 +109,9 @@ function initializeChart(root) {
     centerLink.append("text")
         .attr("class", "centerText")
         .attr("id", "centerLink")
+        .attr("dx", 5)
         .attr("dy", 47)
-        .text("Open in your Dropbox.");
-
-    console.log(partition.nodes(root).slice(1))
+        .text("Open in your Dropbox");
 
     var path = svg.selectAll("path")
         .data(partition.nodes(root).slice(1))
