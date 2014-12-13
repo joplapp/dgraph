@@ -22,6 +22,15 @@ var Tree = function(name){
     this.__smallChildrenContainer = null;
 };
 
+Tree.prototype.getPath = function(){
+    if(this.parent){
+        console.log("bla: "+this.parent.getPath() + "/" + this.name);
+        return this.parent.getPath() + "/" + this.name;
+    }else{
+        return "";
+    }
+};
+
 Tree.prototype.addNode = function(name){
     var node = new Tree(name);
     this.__children.push(node);

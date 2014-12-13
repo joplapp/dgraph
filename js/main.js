@@ -46,7 +46,7 @@ function loadGraph(){
         console.log(totalBytes);
     });
 
-    var tree = new Tree("main");
+    var tree = new Tree("home");
 
     loadDelta(tree, undefined, function(){
         setTimeout(function(){
@@ -168,9 +168,8 @@ function getReadableFileSizeString(fileSizeInBytes) {
     return Math.max(fileSizeInBytes, 0.1).toFixed(1) + byteUnits[i];
 }
 
-String.prototype.trunc = String.prototype.trunc ||
-function(n, endCharsToShow){
+String.prototype.trunc = function(n, endCharsToShow){
     endCharsToShow = endCharsToShow || 0;
 
-    return this.length>n ? this.substr(0,n-(1+endCharsToShow))+'…' + this.substr(-endCharsToShow, endCharsToShow): this;
+    return this.length>n ? this.substr(0,n-(1+endCharsToShow))+'\u2026' + this.substr(-endCharsToShow, endCharsToShow): this;
 };

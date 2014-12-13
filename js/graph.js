@@ -75,13 +75,32 @@ function initializeChart(root) {
     var centerFolderName = elemEnter.append("text")
         .attr("class", "centerText")
         .attr("id", "centerFolderName")
-        .text((root.name).trunc(20,3));
+        .text((root.name).trunc(10,2));
 
     var centerFolderSize = elemEnter.append("text")
         .attr("class", "centerText")
         .attr("id", "centerFolderSize")
         .attr("dy", 28)
         .text(getReadableFileSizeString(root.size));
+
+    var centerLinkGroup = elemEnter.append("g");
+
+    centerLinkGroup.append('text')
+        .attr("dy",48)
+        .attr("dx", -80)
+        .attr("class", "centerText")
+        .attr('font-family', 'FontAwesome')
+        .text('\uf08e');
+
+    var centerLink = centerLinkGroup.append("a")
+        .attr("xlink:href", "http://www.dropbox.com/home"+root.getPath())
+        .attr("target", "_blank");
+
+    centerLink.append("text")
+        .attr("class", "centerText")
+        .attr("id", "centerLink")
+        .attr("dy", 47)
+        .text("Open in your Dropbox.");
 
     console.log(partition.nodes(root).slice(1))
 
@@ -136,7 +155,7 @@ function initializeChart(root) {
         center.datum(root);
         centerFolderName.text((root.name).trunc(10,2));
         centerFolderSize.text(getReadableFileSizeString(root.size));
-        console.log(root);
+        centerLink.attr("xlink:href", "http://www.dropbox.com/home"+root.getPath());
 
         // When zooming in, arcs enter from the outside and exit to the inside.
         // Entering outside arcs start from the old layout.
