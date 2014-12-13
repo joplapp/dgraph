@@ -63,12 +63,25 @@ function initializeChart(root) {
             return d.size;
         });
 
-    var center = svg.append("circle")
+    var elemEnter = svg.append("g");
+
+    var center = elemEnter.append("circle")
         .attr("r", radius / 3)
         .on("click", zoomOut);
 
     center.append("title")
         .text("zoom out");
+
+    var centerFolderName = elemEnter.append("text")
+        .attr("class", "centerText")
+        .attr("id", "centerFolderName")
+        .text((root.name).trunc(20,3));
+
+    var centerFolderSize = elemEnter.append("text")
+        .attr("class", "centerText")
+        .attr("id", "centerFolderSize")
+        .attr("dy", 28)
+        .text(getReadableFileSizeString(root.size));
 
     console.log(partition.nodes(root).slice(1))
 
@@ -121,6 +134,9 @@ function initializeChart(root) {
         }
 
         center.datum(root);
+        centerFolderName.text((root.name).trunc(10,2));
+        centerFolderSize.text(getReadableFileSizeString(root.size));
+        console.log(root);
 
         // When zooming in, arcs enter from the outside and exit to the inside.
         // Entering outside arcs start from the old layout.

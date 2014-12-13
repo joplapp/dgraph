@@ -166,4 +166,11 @@ function getReadableFileSizeString(fileSizeInBytes) {
     } while (fileSizeInBytes > 1024);
 
     return Math.max(fileSizeInBytes, 0.1).toFixed(1) + byteUnits[i];
+}
+
+String.prototype.trunc = String.prototype.trunc ||
+function(n, endCharsToShow){
+    endCharsToShow = endCharsToShow || 0;
+
+    return this.length>n ? this.substr(0,n-(1+endCharsToShow))+'…' + this.substr(-endCharsToShow, endCharsToShow): this;
 };

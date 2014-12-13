@@ -11,3 +11,17 @@ circle {
 #dropbox-connect {
     display: none;
 }
+
+.centerText {
+    text-anchor: middle;
+
+}
+
+#centerFolderName {
+    font-size: 28px;
+    font-weight: bold;
+}
+
+#centerFolderSize {
+    font-size: 20px;
+}
