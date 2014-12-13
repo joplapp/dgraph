@@ -14,7 +14,17 @@ function initializeChart(root) {
         .clamp(true)
         .range([90, 20]);
 
+    var tip = d3.tip()
+        .attr('class', 'd3-tip')
+        .direction('w')
+        .offset([0,-5])
+        .html(function(d) {
+            console.log(d);
+            return d.name + ": "+ getReadableFileSizeString(d.size);
+        });
+
     var svg = d3.select("#content").append("svg")
+        .call(tip)
         .attr("width", margin.left + margin.right)
         .attr("height", margin.top + margin.bottom)
         .append("g")
@@ -115,6 +125,8 @@ function initializeChart(root) {
             this._current = updateArc(d);
         })
         .on("click", zoomIn)
+        .on('mouseover', tip.show)
+        .on('mouseout', tip.hide);
 
     path.append("title")
         .text(function(d){
