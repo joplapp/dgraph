@@ -70,6 +70,8 @@ function initializeChart(root) {
     center.append("title")
         .text("zoom out");
 
+    console.log(partition.nodes(root).slice(1))
+
     var path = svg.selectAll("path")
         .data(partition.nodes(root).slice(1))
         .enter().append("path")
