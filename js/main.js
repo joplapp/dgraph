@@ -13,8 +13,12 @@ if ((host == window.location.host) && (window.location.protocol != "https:")){
 $( document ).ready(authenticate);
 
 $(document).ready(function() {
-        $("#privacy-policy-link").click(function () {
+        $("#privacy-policy-link").click(function (e) {
             $("#privacy-policy").toggle();
+
+            // stop event and scroll to bottom to make policy visible (yeah we're that transparent!)
+            e.preventDefault();
+            $("html, body").animate({ scrollTop: $(document).height() }, "slow");
         });
 });
 
