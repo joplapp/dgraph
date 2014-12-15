@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>dgraph: visualize your dropbox!</title>
+    <title>dgraph: visualize your Dropbox!</title>
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js" type="text/javascript"></script>
     <script src="js/bootstrap.min.js" type="text/javascript"></script>
@@ -23,6 +23,8 @@
     <link href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-social/4.2.1/bootstrap-social.min.css" rel="stylesheet"/>
 
     <link rel="stylesheet" href="//rawgithub.com/Caged/d3-tip/master/examples/example-styles.css">
+
+    <link rel="icon" type="image/x-icon" href="img/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="css/style.css" />
 
@@ -64,7 +66,7 @@
                     <i class="fa fa-dropbox"></i>
                     Use with your Dropbox
                 </a>
-                <span><strong>Your data is safe:</strong> We do not remove or change any files. All our code is open-source on github! </span>
+                <span><strong>Your data is safe:</strong> We do not remove or change any files & don't store any information about your Dropbox. All our code is open-source on Github! </span>
             </div>
 
             <div id="progress-box" class="progress" style="display: none">
@@ -90,6 +92,30 @@
         </div>
 
         Made by <a href="http://www.github.com/siebenundvierzig">Johannes</a> & <a href="http://www.github.com/sukram21">Markus</a> <br>
+        <a id="privacy-policy-link" href="#">Privacy Policy</a><br>
+        <div id="privacy-policy" style="display: none; text-align: left">
+            We're using the <strong>Dropbox API</strong>, <strong>Google Analytics</strong> and the <strong>Facebook Share Button</strong>.
+
+            <h4>Dropbox API</h4>
+            <p>
+                We're using the Dropbox API (by using this JaavaScript library): <a target="_blank" href="https://github.com/dropbox/dropbox-js">dropbox-js</a>. To visualize your folders and files, we need access on your whole Dropbox.
+                For the functioning of our app, we would only need Read access - unfortunately Dropbox does support only a combined Read/Write access. We do not make use of this Write permission.
+                In fact, we do not store a single bit of your Drobpox information when visualizing your Dropbox folder (and we do not plan to do so). If you don't trust us, take a look at our website's source code on <a href="https://github.com/siebenundvierzig/dgraph/" target="_blank">Github</a>.
+            </p>
+
+            <h4>Google Analytics</h4>
+            <p>
+                As many sites around the web, we use Google Analytics to keep track about the number of visitors we have. Google Analytics places a cookie on your computer to identify you on later visits.
+                To opt out, visit one of Google Analytics <a href="https://tools.google.com/dlpage/gaoptout/" target="_blank">currently available opt-outs</a>.
+            </p>
+
+            <h4>Facebook Share Button</h4>
+            <p>
+                Our website is using Social Plugins of facebook.com. This means, every time you are using our website, a connection to Facebook is created.
+                We can not control how Facebook uses this data.
+                It could be used to identify you when visiting other websites using the Social Plugins or when using the Facebook website. You can find the Facebook privacy policy here: <a href="http://www.facebook.com/policy.php" target="_blank">http://www.facebook.com/policy.php</a>.
+            </p>
+        </div>
         <iframe src="https://mdo.github.io/github-buttons/github-btn.html?user=siebenundvierzig&repo=dgraph&type=watch"
                 allowtransparency="true" frameborder="0" scrolling="0" width="62" height="20"></iframe>
         <div style="vertical-align: top" class="fb-share-button" data-href="https://github.com/siebenundvierzig/dgraph" data-layout="button"></div>

@@ -12,6 +12,12 @@ if ((host == window.location.host) && (window.location.protocol != "https:")){
 
 $( document ).ready(authenticate);
 
+$(document).ready(function() {
+        $("#privacy-policy-link").click(function () {
+            $("#privacy-policy").toggle();
+        });
+});
+
 function authenticate(){
     // Try to use cached credentials.
     client.authenticate({interactive: false}, function(error, client) {
