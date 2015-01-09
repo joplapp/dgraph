@@ -4,6 +4,7 @@
 
 
 var client = new Dropbox.Client({ key: "f629oxf1xdmgu0g" });
+var graph;
 
 var host = "siebenundvierzig.github.io";
 if ((host == window.location.host) && (window.location.protocol != "https:")){
@@ -65,7 +66,6 @@ function loadGraph(){
             finalizeChart(tree);
         }, 300);
     }, function (currentProgress) {
-        console.log(currentProgress / totalBytes);
         if (totalBytes == 0) {
             return;
         }
@@ -133,8 +133,7 @@ var loadDelta = function (tree, cursor, done, progress, currentBytes, counter) {
 
 var MAX_NUM_LEAVES = 25;
 
-var lastTime,
-    updateChart;
+var lastTime;
 function loadChartStep(tree, missingBytes) {
     var now = Date.now();
     if(lastTime && now - lastTime < 100) {  //prevent updating to often
@@ -149,11 +148,8 @@ function loadChartStep(tree, missingBytes) {
     tree.computeSize();
     tree.publishChildren();
 
-    if(updateChart){
-        updateChart();
-    } else {
-        updateChart = initializeChart(tree);
-    }
+    graph ? graph.update() : (graph = new DGraph(tree));
+
     tree.removeChild("waiting", missingBytes);
 }
 
@@ -163,7 +159,7 @@ function finalizeChart(tree){
     tree.computeSize();
     tree.publishChildren();
 
-    updateChart ? updateChart() : initializeChart(tree);
+    graph ? graph.update() : (graph = new DGraph(tree));
 }
 
 function getReadableFileSizeString(fileSizeInBytes) {
