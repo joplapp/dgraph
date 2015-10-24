@@ -1,9 +1,9 @@
-dgraph
+dgraph - visualize your dropbox!
 ======
-##### Live-Demo: https://siebenundvierzig.github.io/dgraph
-visualize your dropbox!
+##### Live-Demo: https://joplapp.github.io/dgraph
 
-running out of space in your dropbox?
-use this simple tool to find space hogs and other large files that fill your dropbox!
+Running out of space in your Dropbox? Use this simple tool to find space hogs and other large files that fill your Dropbox!
 
-uses this awesome d3 visalization: https://gist.github.com/mbostock/5944371
+![Image of dgraph in action](https://joplapp.github.io/dgraph/img/demo_image.png)
+
+dgraph uses this awesome d3 visualization: https://gist.github.com/mbostock/5944371
