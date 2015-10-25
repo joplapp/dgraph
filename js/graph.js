@@ -139,7 +139,7 @@ DGraph.prototype = {
                 .style("fill", function (d) {
                     return d.fill;
                 })
-                .on("click", that.zoomIn.bind(this))
+                .on("click", that.zoomIn.bind(that))
                 .each(function (d) {
                     this._current = enterArc(d);
                 });
