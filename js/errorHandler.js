@@ -38,3 +38,5 @@ var showError = function(error) {
         // Tell the user an error occurred, ask them to refresh the page.
     }
 };
+
+module.exports = showError;

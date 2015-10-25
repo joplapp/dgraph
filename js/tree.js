@@ -151,3 +151,8 @@ Tree.prototype.pruneSmallFiles = function(numChildren){
         this.__smallChildrenContainer = this.addChild(counter+" small files", totalSize);
     }
 };
+
+module.exports = {
+    Tree: Tree,
+    Leaf: Leaf
+};

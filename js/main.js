@@ -1,7 +1,9 @@
 /**
  * Created by Johannes on 02.12.2014.
  */
-
+var Tree = require("./tree").Tree,
+    DGraph = require("./graph"),
+    showError = require("./errorHandler");
 
 var client = new Dropbox.Client({ key: "f629oxf1xdmgu0g" });
 var graph;
@@ -160,18 +162,6 @@ function finalizeChart(tree){
     tree.publishChildren();
 
     graph ? graph.update() : (graph = new DGraph(tree));
-}
-
-function getReadableFileSizeString(fileSizeInBytes) {
-
-    var i = -1;
-    var byteUnits = [' kB', ' MB', ' GB', ' TB', 'PB', 'EB', 'ZB', 'YB'];
-    do {
-        fileSizeInBytes = fileSizeInBytes / 1024;
-        i++;
-    } while (fileSizeInBytes > 1024);
-
-    return Math.max(fileSizeInBytes, 0.1).toFixed(1) + byteUnits[i];
 }
 
 String.prototype.trunc = function(n, endCharsToShow){

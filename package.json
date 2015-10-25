@@ -1,0 +1,44 @@
+{
+  "name": "dgraph",
+  "version": "1.0.0",
+  "description": "visualize your dropbox!",
+  "main": "js/main.js",
+  "dependencies": {
+    "gulp-babel": "^5.3.0"
+  },
+  "devDependencies": {
+    "browserify": "^11.2.0",
+    "del": "^2.0.2",
+    "gulp": "^3.9.0",
+    "gulp-jshint": "^1.11.2",
+    "gulp-sourcemaps": "^1.6.0",
+    "gulp-uglify": "^1.4.2",
+    "gulp-util": "^3.0.7",
+    "jshint": "^2.8.0",
+    "jshint-stylish": "^2.0.1",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joplapp/dgraph.git"
+  },
+  "keywords": [
+    "dropbox",
+    "visualization",
+    "d3"
+  ],
+  "author": "Johannes Plapp",
+  "contributors": [
+    "Johannes Plapp",
+    "Markus M�ller"
+  ],
+  "license": "LicenseRef-LICENCE",
+  "bugs": {
+    "url": "https://github.com/joplapp/dgraph/issues"
+  },
+  "homepage": "https://github.com/joplapp/dgraph#readme"
+}

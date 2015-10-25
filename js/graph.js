@@ -17,13 +17,6 @@ var DGraph = function(root){
     this.initialize();
 };
 
-// browserify support
-
-if ( typeof module === 'object' ) {
-
-    module.exports = DGraph;
-}
-
 DGraph.prototype = {
     constructor: DGraph,
 
@@ -283,3 +276,17 @@ DGraph.Center.prototype = {
         this.centerLink.attr("xlink:href", "http://www.dropbox.com/home"+root.getPath());
     }
 };
+
+function getReadableFileSizeString(fileSizeInBytes) {
+
+    var i = -1;
+    var byteUnits = [' kB', ' MB', ' GB', ' TB', 'PB', 'EB', 'ZB', 'YB'];
+    do {
+        fileSizeInBytes = fileSizeInBytes / 1024;
+        i++;
+    } while (fileSizeInBytes > 1024);
+
+    return Math.max(fileSizeInBytes, 0.1).toFixed(1) + byteUnits[i];
+}
+
+module.exports = DGraph;
