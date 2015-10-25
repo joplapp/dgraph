@@ -1,6 +1,8 @@
 /**
  * Created by Johannes on 02.12.2014.
  */
+"use strict";
+
 var Tree = require("./tree").Tree,
     DGraph = require("./graph"),
     showError = require("./errorHandler");

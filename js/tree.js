@@ -1,6 +1,7 @@
 /**
  * Created by Johannes on 02.12.2014.
  */
+"use strict";
 
 var uniqueItemId = 0;
 

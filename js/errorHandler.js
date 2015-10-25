@@ -1,6 +1,8 @@
 /**
  * Created by Johannes on 02.12.2014.
  */
+"use strict";
+
 var showError = function(error) {
     switch (error.status) {
         case Dropbox.ApiError.INVALID_TOKEN:
